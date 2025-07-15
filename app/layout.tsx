@@ -4,7 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 
 const inter = Inter({ subsets: ["latin"] })
-
+//测试一下是不是自己可以自动部署
 export const metadata: Metadata = {
   title: "中文起名助手 - 为外国朋友量身定制",
   description: "专业的中文起名工具，为外国朋友生成富有意义的中文名字",
