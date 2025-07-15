@@ -18,10 +18,41 @@ export default function Home() {
     setIsLoading(true)
 
     try {
-      // 模拟API调用
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // 调用真实的API端点
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
 
-      const mockResults: ChineseName[] = [
+      if (!response.ok) {
+        throw new Error(`请求失败: ${response.status}`)
+      }
+
+      const data = await response.json()
+      
+      if (data.error) {
+        console.error('API错误:', data.error)
+        throw new Error(data.error)
+      }
+
+      if (data.fallback) {
+        console.warn('使用备用名字:', data.error)
+      }
+
+      if (data.usage) {
+        console.log('API使用统计:', data.usage)
+      }
+
+      setResults(data.names || [])
+      setShowResults(true)
+    } catch (error) {
+      console.error("生成失败:", error)
+      
+      // 如果网络请求完全失败，使用本地备用数据
+      const fallbackResults: ChineseName[] = [
         {
           name: "志远",
           pinyin: "Zhì Yuǎn",
@@ -44,10 +75,11 @@ export default function Home() {
         },
       ]
 
-      setResults(mockResults)
+      setResults(fallbackResults)
       setShowResults(true)
-    } catch (error) {
-      console.error("生成失败:", error)
+      
+      // 可以在这里显示错误提示
+      alert('生成失败，已显示示例名字。请检查网络连接或稍后重试。')
     } finally {
       setIsLoading(false)
     }
